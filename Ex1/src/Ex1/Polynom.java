@@ -6,58 +6,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.function.Predicate;
 
-/**
- * This class represents a Polynom with add, multiply functionality, it also
- * should support the following: 1. Riemann's Integral:
- * https://en.wikipedia.org/wiki/Riemann_integral 2. Finding a numerical value
- * between two values (currently support root only f(x)=0). 3. Derivative
- * 
- * @author Boaz
- * 
- *         -----this class represent: 1)Polynom- use getNextMonom function and
- *         add the monom to the LinkedList and cut the string.
- *         2)organizePolynom- Initialize the array to false, run in the first
- *         loop on the array and check if arr[i] = false . If it's true, arr[i]
- *         = true. then creates a new monom equals to this.polynomList[i], enter
- *         the second loop and run from arr[j] (j = i+1), if the arr(j)= false.
- *         then creates a new monom equals to this.polynomList[j], if their
- *         power are equals, then add two monoms. continue to run in the inner
- *         loop until the end of the array ' and then add the monom to the new
- *         newPolynomList. 3)getNextMonom - Help function to create a new
- *         polynom. get a string and runs it in the loop and stops when the
- *         string[i] = +/- , returning the string until the +/-. 4) f(x) -Runing
- *         in the loop on the Polynom list, and use the function from the Monom
- *         class f(x),to calculate monom by monom in the Polynom. 5)add(Polynom
- *         able) - Create a new polynom that is equal to the polynom able,
- *         running on the polynom and each monom add to this.polynom. 6)add -
- *         Adds the monom to the polynom and call the organize function.
- *         7)substract - Multiply the monom by monom -1 and call the add
- *         function. 8)substract(Polynom able) - Create a new polynom that is
- *         equal to the polynom able, running on the polynom and each monom
- *         substract from this.polynom. 9)multiply - Running on the polynom and
- *         use the function multiply from Monom class to multiply
- *         this.polynom[i] with Monom. 10)multiply -Copy this.polynom to a new
- *         polynom. Run in the loop and create another polynom equal to the new
- *         polynom. With it multiply the monom from polynom able in the new
- *         polynom and at the end of the loop add to this.polynom all the
- *         result. 11)equals - Copy this.polynom to a new polynom. Call the
- *         subtract function and subtracts the polynom able from the new
- *         polynom. If the answer equals 0, by the range of Epsilon returns true
- *         (isZero function). 12)isZero- running on the polynom and check each
- *         monom if equals to zero(use the isZero function from Monom class).
- *         13)root - running on the polynom and check each monom if equals to
- *         zero(use the isZero function from Monom class) 13) Check whether fx0
- *         * fx1 > 0. (Because otherwise there is no point that fx equals 0).
- *         Creating a result variable that takes the average of x0 and x1 Run in
- *         the loop while the absolute value of x0-x1 is greater than Epsilon.
- *         The function returns the root after reducing the section at the range
- *         of epsilon. 14)copy - create a new polynom and running in for on
- *         this.polynom and add the monom to the new polynom. 15)derivative -
- *         Run in the loop and call the derivative function from the monom
- *         class, and run on each monom 16) area - Runners in loop from x0 to x1
- *         and each time add to i epsilon, and according to Riemann integral.
- *         17)toString - take a Polynom and covert it to String
- */
 public class Polynom implements Polynom_able {
 	public static final Polynom Zero = new Polynom();
 	private LinkedList<Monom> polynomList = new LinkedList<Monom>();
