@@ -31,7 +31,7 @@ public class ComplexFunction implements complex_function {
 			throw new InvalidInputException("Undefind function");
 		} // function left cannot be null
 		this.left = left.copy();
-		if (op.toLowerCase() == "none" || right == null) {// if operation is None <---> function right is null
+		if (op.toLowerCase().equals("none") || right == null) {// if operation is None <---> function right is null
 			if (right != null) {
 				throw new InvalidInputException("undefind function");
 			}
@@ -253,11 +253,4 @@ public class ComplexFunction implements complex_function {
 		return this.op;
 	}
 
-	public static void main(String[] args) {
-		function p = new Polynom("2x^4+5x^2");
-		function p1 = new Polynom("2x^8");
-		ComplexFunction cf = new ComplexFunction();
-		function f1 = cf.initFromString("plus(2x,)");
-		System.out.println(f1);
-	}
 }
