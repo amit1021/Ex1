@@ -1,148 +1,216 @@
-package Ex1Test;
+package Ex1;
 
-import static org.junit.jupiter.api.Assertions.*;
-
+import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import java.awt.Color;
+import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.FileWriter;
+import java.util.ArrayList;
+import java.util.Collection;
 
-import org.junit.jupiter.api.Test;
+public class Functions_GUI implements functions {
+	private ArrayList<function> fc = new ArrayList<function>();
 
-import Ex1.ComplexFunction;
-import Ex1.Functions_GUI;
-import Ex1.Monom;
-import Ex1.Operation;
-import Ex1.Polynom;
-import Ex1.function;
-import Ex1.functions;
-
-/**
- * Note: minor changes (thanks to Amichai!!) The use of "get" was replaced by
- * iterator!
- * 
- * Partial JUnit + main test for the GUI_Functions class, expected output from
- * the main: 0) java.awt.Color[r=0,g=0,b=255] f(x)= plus(-1.0x^4 +2.4x^2
- * +3.1,+0.1x^5 -1.2999999999999998x +5.0) 1) java.awt.Color[r=0,g=255,b=255]
- * f(x)= plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x -4.0)),2.0) 2)
- * java.awt.Color[r=255,g=0,b=255] f(x)= div(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5
- * -1.2999999999999998x +5.0),-1.0x^4 +2.4x^2 +3.1) 3)
- * java.awt.Color[r=255,g=200,b=0] f(x)= -1.0x^4 +2.4x^2 +3.1 4)
- * java.awt.Color[r=255,g=0,b=0] f(x)= +0.1x^5 -1.2999999999999998x +5.0 5)
- * java.awt.Color[r=0,g=255,b=0] f(x)= max(max(max(max(plus(-1.0x^4 +2.4x^2
- * +3.1,+0.1x^5 -1.2999999999999998x +5.0),plus(div(+1.0x +1.0,mul(mul(+1.0x
- * +3.0,+1.0x -2.0),+1.0x -4.0)),2.0)),div(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5
- * -1.2999999999999998x +5.0),-1.0x^4 +2.4x^2 +3.1)),-1.0x^4 +2.4x^2
- * +3.1),+0.1x^5 -1.2999999999999998x +5.0) 6) java.awt.Color[r=255,g=175,b=175]
- * f(x)= min(min(min(min(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x
- * +5.0),plus(div(+1.0x +1.0,mul(mul(+1.0x +3.0,+1.0x -2.0),+1.0x
- * -4.0)),2.0)),div(plus(-1.0x^4 +2.4x^2 +3.1,+0.1x^5 -1.2999999999999998x
- * +5.0),-1.0x^4 +2.4x^2 +3.1)),-1.0x^4 +2.4x^2 +3.1),+0.1x^5
- * -1.2999999999999998x +5.0)
- * 
- * @author boaz_benmoshe
- *
- */
-class Functions_GUITest {
-
-	@Test
-	void test_contain() {
-		ArrayList<function> c = new ArrayList<function>();
-		String[] Polynom = { "4x^3-2x+3", "-x+5+12x^4", "x+2x^0" };
-		String[] expectedPol = { "4x^3-2x+3", "-x+5+12x^3", "x+2x^0" };
-		boolean[] expect = { true, false, true };
-		for (int i = 0; i < Polynom.length; i++) {
-			Polynom p = new Polynom(Polynom[i]);
-			Polynom expectPol = new Polynom(expectedPol[i]);
-			boolean currentP = expect[i];
-			c.add(p);
-			assertTrue(c.contains(expectPol) == currentP);
-		}
+	public Functions_GUI() {
+		this.fc = new ArrayList<function>();
 	}
 
-	@Test
-	void test_initFromFile() {
-		Functions_GUI test = new Functions_GUI();
-		Functions_GUI expect = new Functions_GUI();
-		String file = "C:\\Users\\Ohad\\Desktop\\InitFromFileTest.txt";
-		String[] fileExpect = { "4.0x^2+3.0x-2.0x", "8.0x^4+2.0", "3.0x" };
-		try {
-			test.initFromFile(file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public Functions_GUI(Collection<? extends function> c) {
+		this.fc.addAll(c);
+	}
+
+	public void initFromFile(String file) throws IOException {
+		FileReader fileRead = new FileReader(file);
 		ComplexFunction cf = new ComplexFunction();
-		for (int i = 0; i < fileExpect.length; i++) {
-			function f = cf.initFromString(fileExpect[i]);
-			expect.add(f);
+		String strCurrentLine;
+		BufferedReader fileread = new BufferedReader(fileRead);
+		while ((strCurrentLine = fileread.readLine()) != null) {
+			function f = cf.initFromString(strCurrentLine);
+			this.fc.add(f);
 		}
-		assertTrue(test.containsAll(expect));
+		fileread.close();
 	}
 
-	@Test
-	void copy() {
-		ComplexFunction cf = new ComplexFunction();
-		function f1 = cf.initFromString("min(4x,max(mul(divid(17x^8,12),x),x^2+3x-4))");
-		function f2 = f1;
-		assertTrue(f1.equals(f2));
+	public void saveToFile(String file) throws IOException {
+		FileWriter filewrite = new FileWriter(file);
+		for (int i = 0; i < this.fc.size(); i++) {
+			filewrite.write(this.fc.get(i).toString() + "\n");
+		}
+		filewrite.close();
 	}
 
-	public static void main(String[] a) {
-		functions data = FunctionsFactory();
-		// int w=1000, h=600, res=200;
-		// Range rx = new Range(-10,10);
-		// Range ry = new Range(-5,15);
-		// data.drawFunctions(w,h,rx,ry,res);
-		String file = "function_file.txt";
-		String file2 = "function_file2.txt";
+	public void drawFunctions(int width, int height, Range rx, Range ry, int resolution) {
+
+		// window size
+		StdDraw.setCanvasSize(width, height);
+
+		// rescale the coordinate system
+		StdDraw.setXscale(rx.get_min(), rx.get_max());
+		StdDraw.setYscale(ry.get_min(), ry.get_max());
+		double x_steps = Math.abs(rx.get_max() - rx.get_min()) / resolution;
+
+		// vertical lines
+		StdDraw.setPenColor(Color.LIGHT_GRAY);
+		for (int i = (int) (rx.get_min()); i < rx.get_max(); i++) {
+			StdDraw.line(i, ry.get_min(), i, ry.get_max());
+		}
+
+		// horizontal lines
+		for (int i = (int) (ry.get_min()); i < ry.get_max(); i++) {
+			StdDraw.line(rx.get_min(), i, rx.get_max(), i);
+		}
+
+		// define pen, font and color
+		StdDraw.setPenColor(Color.BLACK);
+		StdDraw.setPenRadius(0.005);
+		StdDraw.setFont(new Font("TimesRoman", Font.BOLD, 12));
+
+		// x axis
+		StdDraw.line(rx.get_min(), 0, rx.get_max(), 0);
+		StdDraw.line(0, ry.get_min(), 0, ry.get_max());
+		for (int i = (int) rx.get_min(); i <= rx.get_max(); i++) {
+			StdDraw.text(i, -0.5, Integer.toString(i));
+		}
+
+		// y axis
+		StdDraw.line(0, ry.get_min(), 0, ry.get_max());
+		for (double i = ry.get_min(); i <= ry.get_max(); i++) {
+			StdDraw.text(-0.5, i, Double.toString(i));
+		}
+
+		Color[] color = { Color.blue, Color.cyan, Color.MAGENTA, Color.ORANGE, Color.red, Color.GREEN, Color.PINK };
+
+		// draw the functions
+		for (int i = 0; i < this.fc.size(); i++) {
+			StdDraw.setPenColor(color[i % 7]); // Selects a different color in each iteration
+			for (double j = rx.get_min(); j < rx.get_max(); j += x_steps) {
+				StdDraw.line(j, this.fc.get(i).f(j), j + x_steps, this.fc.get(i).f(j + x_steps));
+			}
+		}
+
+	}
+
+	/**
+	 * Draws all the functions in the collection in a GUI window using the given
+	 * JSON file
+	 * 
+	 * @param json_file - the file with all the parameters for the GUI window. Note:
+	 *                  is the file id not readable or in wrong format should use
+	 *                  default values.
+	 */
+	public void drawFunctions(String json_file) {
+		Object obj = null;
 		try {
-			data.saveToFile(file);
-			Functions_GUI data2 = new Functions_GUI();
-			data2.initFromFile(file);
-			data.saveToFile(file2);
-		} catch (Exception e) {
-			e.printStackTrace();
+			JSONParser jp = new JSONParser();
+			FileReader fr = new FileReader(json_file);
+			obj = jp.parse(fr);
+		} catch (IOException | ParseException e) {
+			int Width = 1000;
+			int Height = 600;
+			int Resolution = 200;
+			Range x = new Range(-10, 10);
+			Range y = new Range(-5, 15);
+			drawFunctions(Width, Height, x, y, Resolution); // draw the functions with the default value
 		}
 
-		String JSON_param_file = "GUI_params.txt";
-		data.drawFunctions(JSON_param_file);
+		// type casting obj to JSONObject
+		JSONObject jo = (JSONObject) obj;
+
+		// getting width, height and resolution
+		int Width = (int) (long) jo.get("Width");
+		int Height = (int) (long) jo.get("Height");
+		int Resolution = (int) (long) jo.get("Resolution");
+
+		// getting range
+		JSONArray Range_X = (JSONArray) jo.get("Range_X");
+		JSONArray Range_Y = (JSONArray) jo.get("Range_Y");
+
+		double minY = (long) Range_Y.get(0);
+		double maxY = (long) Range_Y.get(1);
+		double minX = (long) Range_X.get(0);
+		double maxX = (long) Range_X.get(1);
+		Range x = new Range(minX, maxX);
+		Range y = new Range(minY, maxY);
+
+		drawFunctions(Width, Height, x, y, Resolution); // draw the functions with the value
 	}
 
-	public static functions FunctionsFactory() {
-		functions ans = new Functions_GUI();
-		String s1 = "3.1 +2.4x^2 -x^4";
-		String s2 = "5 +2x -3.3x +0.1x^5";
-		String[] s3 = { "x +3", "x -2", "x -4" };
-		Polynom p1 = new Polynom(s1);
-		Polynom p2 = new Polynom(s2);
-		Polynom p3 = new Polynom(s3[0]);
-		ComplexFunction cf3 = new ComplexFunction(p3);
-		for (int i = 1; i < s3.length; i++) {
-			cf3.mul(new Polynom(s3[i]));
-		}
+	@Override
+	public boolean contains(Object o) {
+		return this.fc.contains(o);
+	}
 
-		ComplexFunction cf = new ComplexFunction(Operation.Plus, p1, p2);
-		ComplexFunction cf4 = new ComplexFunction("div", new Polynom("x +1"), cf3);
-		cf4.plus(new Monom("2"));
-		ans.add(cf.copy());
-		ans.add(cf4.copy());
-		cf.div(p1);
-		ans.add(cf.copy());
-		String s = cf.toString();
-		function cf5 = cf4.initFromString(s1);
-		function cf6 = cf4.initFromString(s2);
-		ans.add(cf5.copy());
-		ans.add(cf6.copy());
-		Iterator<function> iter = ans.iterator();
-		function f = iter.next();
-		ComplexFunction max = new ComplexFunction(f);
-		ComplexFunction min = new ComplexFunction(f);
-		while (iter.hasNext()) {
-			f = iter.next();
-			max.max(f);
-			min.min(f);
+	public int size() {
+		return this.fc.size();
+	}
+
+	public boolean isEmpty() {
+		return this.fc.isEmpty();
+	}
+
+	public boolean contains(function o) {
+		return this.fc.contains(o);
+	}
+
+	public Iterator<function> iterator() {
+		return fc.iterator();
+	}
+
+	public Object[] toArray() {
+		return fc.toArray();
+	}
+
+	public <T> T[] toArray(T[] a) {
+		return null;
+	}
+
+	public boolean add(function e) {
+		return this.fc.add(e);
+	}
+
+	public boolean remove(Object o) {
+		return this.fc.remove(o);
+	}
+
+	public boolean containsAll(Collection<?> c) {
+		return this.fc.containsAll(c);
+	}
+
+	public boolean addAll(Collection<? extends function> c) {
+		return this.fc.addAll(c);
+	}
+
+	public boolean removeAll(Collection<?> c) {
+		return this.fc.removeAll(c);
+	}
+
+	public boolean retainAll(Collection<?> c) {
+		return this.fc.retainAll(c);
+	}
+
+	public void clear() {
+		this.fc.clear();
+	}
+
+	public boolean equals(Object o) {
+		return this.fc.equals(o);
+	}
+
+	public int hashCode() {
+		return this.fc.hashCode();
+	}
+
+	public String toString() {
+		String ans = "";
+		for (int i = 0; i < fc.size(); i++) {
+			ans += this.fc.get(i) + "\n";
 		}
-		ans.add(max);
-		ans.add(min);
 		return ans;
 	}
 
