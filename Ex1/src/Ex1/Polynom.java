@@ -319,14 +319,4 @@ public class Polynom implements Polynom_able {
 		}
 		return ans;
 	}
-
-	public static void main(String[] args) {
-		Polynom p = new Polynom("2x+5");
-		Polynom p1 = new Polynom(p);
-		Monom m = new Monom("100x^5");
-		p.add(m);
-		System.out.println("p: " + p);
-		System.out.println("p1: " + p1);
-
-	}
 }
